@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>User Profile - Hostelhub</title>
+    <style>
+        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #f9f9f9; color: #222; }
+        .container { max-width: 700px; margin: 40px auto 100px auto; background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.07); padding: 40px 30px; }
+        .header-row { display: flex; align-items: center; justify-content: space-between; position: relative; }
+        .header-side { width: 80px; display: flex; align-items: center; justify-content: flex-start; }
+        .header-center { flex: 1; display: flex; justify-content: center; align-items: center; position: absolute; left: 0; right: 0; pointer-events: none; }
+        .header-center h1 { color: red; font-size: 2.5rem; margin: 0; pointer-events: auto; }
+        #dashboardIcon { cursor: pointer; margin-left: 0; }
+        #dashboardIcon img { width: 40px; height: 40px; border-radius: 50%; vertical-align: middle; }
+        .register-link img { width: 40px; height: 40px; border-radius: 20px; }
+        #dashboardMenu { display: none; position: absolute; right: 40px; top: 90px; background: #fff; color: #222; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.15); padding: 18px 24px; z-index: 2000; }
+        #dashboardMenu ul { list-style: none; padding: 0; margin: 0; }
+        #dashboardMenu li { margin-bottom: 10px; }
+        #dashboardMenu li:last-child { margin-bottom: 0; }
+        .profile-section { margin-bottom: 36px; }
+        .profile-title { color: #452B1F; font-size: 1.3rem; margin-bottom: 10px; }
+        .profile-info { font-size: 1.1rem; margin-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #452B1F; color: #fff; }
+        tr:nth-child(even) { background: #f2f2f2; }
+        .logout-btn { background: #ff4d4d; color: #fff; border: none; border-radius: 20px; padding: 10px 28px; font-size: 1rem; cursor: pointer; transition: background 0.2s; margin-top: 18px; }
+        .logout-btn:hover { background: #452B1F; }
+        .change-form { background: #f9f9f9; border: 1px solid #ddd; border-radius: 12px; padding: 18px 20px; max-width: 400px; margin-bottom: 18px; }
+        .change-form input { width: 100%; padding: 10px; margin: 8px 0 16px 0; border: 1.5px solid #452B1F; border-radius: 8px; font-size: 1rem; }
+        .change-form button { background: #452B1F; color: #fff; border: none; border-radius: 20px; padding: 10px 28px; font-size: 1rem; cursor: pointer; transition: background 0.2s; }
+        .change-form button:hover { background: #ff4d4d; }
+        .notification { position: fixed; top: 20px; right: 30px; background: #452B1F; color: #fff; padding: 14px 28px; border-radius: 10px; font-size: 1.1rem; z-index: 3000; display: none; }
+        .avatar {
+            width: 48px; height: 48px; border-radius: 50%; object-fit: cover; margin-right: 12px; vertical-align: middle; display: inline-block; background: linear-gradient(135deg,#ffb84d,#452B1F); color: #fff; font-weight: bold; font-size: 2rem; text-align: center; line-height: 48px;
+        }
+        .back-to-top {
+            position: fixed; bottom: 80px; right: 30px; background: #452B1F; color: #fff; border: none; border-radius: 50%; width: 48px; height: 48px; font-size: 2rem; cursor: pointer; box-shadow: 0 2px 12px rgba(0,0,0,0.15); display: none; z-index: 3000; transition: background 0.2s; }
+        .back-to-top:hover { background: #ff4d4d; }
+        .spinner { display: none; margin: 30px auto; border: 6px solid #eee; border-top: 6px solid #452B1F; border-radius: 50%; width: 48px; height: 48px; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @media (max-width: 700px) {
+            .container { padding: 0 2vw; }
+            .header-row { flex-direction: column; gap: 10px; padding: 18px 4vw 0 4vw; }
+            .profile-section { margin-bottom: 24px; }
+            table, th, td { font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-row">
+            <div class="header-side">
+                <span id="dashboardIcon">
+                    <img src="MTN LOGO.png" alt="Dashboard">
+                </span>
+            </div>
+            <div class="header-center">
+                <h1>HOSTELHUB</h1>
+            </div>
+            <div class="header-side" style="justify-content: flex-end;"></div>
+        </div>
+        <div id="dashboardMenu">
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="hostels.html">Available Hostels</a></li>
+                <li><a href="bookings.html">Bookings</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><button id="userLogoutBtn" style="background:#ff4d4d;color:#fff;border:none;border-radius:8px;padding:6px 16px;cursor:pointer;">Logout</button></li>
+            </ul>
+        </div>
+        <div class="profile-section">
+            <div class="profile-title">User Profile</div>
+            <div class="profile-info"><span class="avatar" id="profileAvatar"></span><span id="profileUsername"></span></div>
+        </div>
+        <div class="profile-section">
+            <div class="profile-title">Your Bookings</div>
+            <div id="profileBookings"></div>
+        </div>
+        <div class="profile-section">
+            <div class="profile-title">Your Payments</div>
+            <div id="profilePayments"></div>
+        </div>
+        <div class="profile-section">
+            <div class="profile-title">Change Password</div>
+            <form class="change-form" id="changePasswordForm">
+                <input type="password" id="oldPassword" placeholder="Old Password" required>
+                <input type="password" id="newPassword" placeholder="New Password" required>
+                <input type="password" id="confirmPassword" placeholder="Confirm New Password" required>
+                <button type="submit">Change Password</button>
+            </form>
+        </div>
+        <button class="logout-btn" id="profileLogoutBtn">Logout</button>
+    </div>
+    <button class="back-to-top" id="backToTopBtn" title="Back to Top">↑</button>
+    <div class="spinner" id="profileSpinner"></div>
+    <div class="notification" id="profileNotification"></div>
+    <script>
+    // Only allow access if logged in
+    const username = localStorage.getItem('loggedInUser');
+    if (!username) window.location.href = 'login.html';
+    document.getElementById('profileUsername').textContent = 'Username: ' + username;
+    // Avatar
+    document.getElementById('profileAvatar').textContent = username[0].toUpperCase();
+    // Show/hide back to top
+    window.onscroll = function() {
+        document.getElementById('backToTopBtn').style.display = window.scrollY > 200 ? 'block' : 'none';
+    };
+    document.getElementById('backToTopBtn').onclick = function() {
+        window.scrollTo({top:0,behavior:'smooth'});
+    };
+    // Spinner helper
+    function showSpinner() { document.getElementById('profileSpinner').style.display = 'block'; }
+    function hideSpinner() { document.getElementById('profileSpinner').style.display = 'none'; }
+    // Bookings
+    showSpinner();
+    setTimeout(function() {
+        const bookings = (JSON.parse(localStorage.getItem('bookings')||'[]')).filter(b=>b.user===username);
+        let bookingsHtml = '';
+        if (bookings.length === 0) {
+            bookingsHtml = '<div style="color:#888;">No bookings yet.</div>';
+        } else {
+            bookingsHtml = `<table><tr><th>Hostel</th><th>Location</th><th>Distance</th><th>Price</th></tr>` +
+                bookings.map(b=>`<tr><td>${b.name}</td><td>${b.location}</td><td>${b.distance}</td><td>${b.price}</td></tr>`).join('') +
+                `</table>`;
+        }
+        document.getElementById('profileBookings').innerHTML = bookingsHtml;
+        hideSpinner();
+    }, 400);
+    // Payments
+    showSpinner();
+    setTimeout(function() {
+        const payments = (JSON.parse(localStorage.getItem('payments')||'[]')).filter(p=>p.user===username);
+        let paymentsHtml = '';
+        if (payments.length === 0) {
+            paymentsHtml = '<div style="color:#888;">No payments yet.</div>';
+        } else {
+            paymentsHtml = `<table><tr><th>Amount</th><th>Network</th><th>Number</th></tr>` +
+                payments.map(p=>`<tr><td>${p.amount}</td><td>${p.network}</td><td>${p.number}</td></tr>`).join('') +
+                `</table>`;
+        }
+        document.getElementById('profilePayments').innerHTML = paymentsHtml;
+        hideSpinner();
+    }, 400);
+    // Change password
+    document.getElementById('changePasswordForm').onsubmit = function(e) {
+        e.preventDefault();
+        const oldP = document.getElementById('oldPassword').value;
+        const newP = document.getElementById('newPassword').value;
+        const confirmP = document.getElementById('confirmPassword').value;
+        let users = JSON.parse(localStorage.getItem('users')||'[]');
+        let user = users.find(u=>u.username===username);
+        if (!user || user.password !== oldP) {
+            notify('Old password incorrect!','error');
+            return;
+        }
+        if (newP !== confirmP) {
+            notify('Passwords do not match!','error');
+            return;
+        }
+        user.password = newP;
+        localStorage.setItem('users', JSON.stringify(users));
+        notify('Password changed!');
+        this.reset();
+    };
+    // Logout
+    document.getElementById('profileLogoutBtn').onclick = function() {
+        localStorage.removeItem('loggedInUser');
+        window.location.href = 'login.html';
+    };
+    document.getElementById('userLogoutBtn').onclick = function() {
+        localStorage.removeItem('loggedInUser');
+        window.location.href = 'login.html';
+    };
+    // Dashboard menu logic
+    document.getElementById('dashboardIcon').onclick = function(e) {
+        e.stopPropagation();
+        const menu = document.getElementById('dashboardMenu');
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    };
+    document.body.onclick = function(e) {
+        const menu = document.getElementById('dashboardMenu');
+        if (menu) menu.style.display = 'none';
+    };
+    // Notification
+    function notify(msg, type='success') {
+        const n = document.getElementById('profileNotification');
+        n.textContent = msg;
+        n.style.background = type==='error' ? '#ff4d4d' : '#452B1F';
+        n.style.display = 'block';
+        setTimeout(()=>{ n.style.display = 'none'; }, 2200);
+    }
+    </script>
+</body>
+</html> 

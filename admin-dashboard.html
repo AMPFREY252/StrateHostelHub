@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Admin Dashboard - Hostelhub</title>
+    <style>
+        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #f9f9f9; color: #222; }
+        .container { max-width: 1200px; margin: 40px auto 100px auto; background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.07); padding: 0 0 40px 0; }
+        .header-row { display: flex; align-items: center; justify-content: space-between; position: relative; padding: 40px 30px 0 30px; }
+        .header-side { width: 80px; display: flex; align-items: center; justify-content: flex-start; }
+        .header-center { flex: 1; display: flex; justify-content: center; align-items: center; position: absolute; left: 0; right: 0; pointer-events: none; }
+        .header-center h1 { color: red; font-size: 2.5rem; margin: 0; pointer-events: auto; }
+        #dashboardIcon { cursor: pointer; margin-left: 0; }
+        #dashboardIcon img { width: 40px; height: 40px; border-radius: 50%; vertical-align: middle; }
+        .register-link img { width: 40px; height: 40px; border-radius: 20px; }
+        #dashboardMenu { display: none; position: absolute; right: 40px; top: 90px; background: #fff; color: #222; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.15); padding: 18px 24px; z-index: 2000; }
+        #dashboardMenu ul { list-style: none; padding: 0; margin: 0; }
+        #dashboardMenu li { margin-bottom: 10px; }
+        #dashboardMenu li:last-child { margin-bottom: 0; }
+        .admin-nav { display: flex; gap: 30px; background: #452B1F; color: #fff; padding: 18px 30px; border-radius: 0 0 16px 16px; }
+        .admin-nav a { color: #fff; text-decoration: none; font-size: 1.1rem; padding: 8px 18px; border-radius: 8px; transition: background 0.2s; }
+        .admin-nav a:hover, .admin-nav a.active { background: #ff4d4d; }
+        .admin-main { padding: 40px 30px; }
+        .footer { background: #452B1F; color: #fff; text-align: center; padding: 24px 0 16px 0; position: fixed; width: 100vw; bottom: 0; left: 0; z-index: 1000; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #452B1F; color: #fff; }
+        tr:nth-child(even) { background: #f2f2f2; }
+        .action-btn { background: #452B1F; color: #fff; border: none; border-radius: 8px; padding: 6px 16px; cursor: pointer; margin-right: 8px; }
+        .action-btn:hover { background: #ff4d4d; }
+        .add-form, .edit-form { margin-bottom: 30px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 12px; padding: 18px 20px; max-width: 500px; }
+        .add-form input, .edit-form input { width: 100%; padding: 10px; margin: 8px 0 16px 0; border: 1.5px solid #452B1F; border-radius: 8px; font-size: 1rem; }
+        .add-form button, .edit-form button { background: #452B1F; color: #fff; border: none; border-radius: 20px; padding: 10px 28px; font-size: 1rem; cursor: pointer; transition: background 0.2s; }
+        .add-form button:hover, .edit-form button:hover { background: #ff4d4d; }
+        .edit-form { background: #fffbe6; border: 1.5px solid #ff4d4d; }
+        .section-title { color: #452B1F; margin-bottom: 18px; }
+        .empty-msg { color: #888; margin: 20px 0; }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            background: #452B1F;
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            z-index: 3000;
+            display: none;
+        }
+        .avatar {
+            width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: 8px; vertical-align: middle; display: inline-block; background: linear-gradient(135deg,#ffb84d,#452B1F); color: #fff; font-weight: bold; font-size: 1.1rem; text-align: center; line-height: 32px;
+        }
+        .hostel-icon {
+            width: 28px; height: 28px; border-radius: 8px; object-fit: cover; margin-right: 6px; vertical-align: middle; box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .back-to-top {
+            position: fixed; bottom: 80px; right: 30px; background: #452B1F; color: #fff; border: none; border-radius: 50%; width: 48px; height: 48px; font-size: 2rem; cursor: pointer; box-shadow: 0 2px 12px rgba(0,0,0,0.15); display: none; z-index: 3000; transition: background 0.2s; }
+        .back-to-top:hover { background: #ff4d4d; }
+        .spinner { display: none; margin: 30px auto; border: 6px solid #eee; border-top: 6px solid #452B1F; border-radius: 50%; width: 48px; height: 48px; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @media (max-width: 700px) {
+            .container { padding: 0 2vw; }
+            .header-row, .admin-nav { flex-direction: column; gap: 10px; padding: 18px 4vw 0 4vw; }
+            .admin-main { padding: 18px 4vw; }
+            table, th, td { font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-row">
+            <div class="header-side">
+                <img src="Minimalist_Real_Estate_Logo-removebg-preview (1).png" alt="Site Icon" class="site-logo">
+                <span id="dashboardIcon">
+                    <img src="dashboard.png" alt="Dashboard">
+                </span>
+            </div>
+            <div class="header-center">
+                <h1>HOSTELHUB</h1>
+            </div>
+            <div class="header-side" style="justify-content: flex-end;"></div>
+        </div>
+        <div id="dashboardMenu">
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="admin-login.html" id="adminLogoutMenu">Logout</a></li>
+            </ul>
+        </div>
+        <nav class="admin-nav">
+            <a href="#users" id="navUsers">Users</a>
+            <a href="#hostels" id="navHostels">Hostels</a>
+            <a href="#bookings" id="navBookings">Bookings</a>
+            <a href="#payments" id="navPayments">Payments</a>
+            <a href="#stats" id="navStats">Statistics</a>
+            <a href="#messages" id="navMessages">Messages</a>
+            <a href="#admins" id="navAdmins">Admins</a>
+            <a href="#logout" id="navLogout">Logout</a>
+        </nav>
+        <div class="admin-main" id="adminMain">
+            <h2>Welcome, Admin!</h2>
+            <p>Use the navigation above to manage users, bookings, payments, and view site statistics.</p>
+        </div>
+    </div>
+    <footer class="footer"></footer>
+    <div class="notification" id="adminNotification"></div>
+    <button class="back-to-top" id="backToTopBtn" title="Back to Top">↑</button>
+    <div class="spinner" id="adminSpinner"></div>
+    <script>
+    // Only allow access if admin is logged in
+    if(localStorage.getItem('isAdmin') !== 'true') {
+        window.location.href = 'admin-login.html';
+    }
+    document.getElementById('dashboardIcon').onclick = function(e) {
+        e.stopPropagation();
+        const menu = document.getElementById('dashboardMenu');
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    };
+    document.body.onclick = function(e) {
+        const menu = document.getElementById('dashboardMenu');
+        if (menu) menu.style.display = 'none';
+    };
+    document.getElementById('navLogout').onclick = function(e) {
+        e.preventDefault();
+        localStorage.removeItem('isAdmin');
+        window.location.href = 'admin-login.html';
+    };
+    document.getElementById('adminLogoutMenu').onclick = function(e) {
+        localStorage.removeItem('isAdmin');
+    };
+
+    // Utility functions for localStorage
+    function getData(key, fallback) {
+        try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch { return fallback; }
+    }
+    function setData(key, value) {
+        localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    // Notification logic
+    function notify(msg, type='success') {
+        const n = document.getElementById('adminNotification');
+        n.textContent = msg;
+        n.style.background = type==='error' ? '#ff4d4d' : '#452B1F';
+        n.style.display = 'block';
+        setTimeout(()=>{ n.style.display = 'none'; }, 2200);
+    }
+
+    // Section rendering
+    const adminMain = document.getElementById('adminMain');
+    document.getElementById('navUsers').onclick = function(e) { e.preventDefault(); renderUsers(); };
+    document.getElementById('navHostels').onclick = function(e) { e.preventDefault(); renderHostels(); };
+    document.getElementById('navBookings').onclick = function(e) { e.preventDefault(); renderBookings(); };
+    document.getElementById('navPayments').onclick = function(e) { e.preventDefault(); renderPayments(); };
+    document.getElementById('navStats').onclick = function(e) { e.preventDefault(); renderStats(); };
+    document.getElementById('navMessages').onclick = function(e) { e.preventDefault(); renderMessages(); };
+    document.getElementById('navAdmins').onclick = function(e) { e.preventDefault(); renderAdmins(); };
+
+    // Table helpers
+    function makeTableHeader(cols, sortFn) {
+        return '<tr>' + cols.map((c,i) => `<th onclick='${sortFn}(${i})' style='cursor:pointer;'>${c} &#8597;</th>`).join('') + '<th>Action</th></tr>';
+    }
+    function filterRows(rows, query) {
+        if (!query) return rows;
+        query = query.toLowerCase();
+        return rows.filter(row => row.some(cell => (cell+"").toLowerCase().includes(query)));
+    }
+    function exportCSV(headers, rows, filename) {
+        let csv = headers.join(',') + '\n' + rows.map(r => r.map(cell => '"'+(cell+"").replace(/"/g,'""')+'"').join(',')).join('\n');
+        let blob = new Blob([csv], {type:'text/csv'});
+        let a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        a.click();
+    }
+
+    // Show/hide back to top
+    window.onscroll = function() {
+        document.getElementById('backToTopBtn').style.display = window.scrollY > 200 ? 'block' : 'none';
+    };
+    document.getElementById('backToTopBtn').onclick = function() {
+        window.scrollTo({top:0,behavior:'smooth'});
+    };
+    // Spinner helper
+    function showSpinner() { document.getElementById('adminSpinner').style.display = 'block'; }
+    function hideSpinner() { document.getElementById('adminSpinner').style.display = 'none'; }
+
+    // USERS MANAGEMENT
+    function renderUsers(sortCol=0, sortAsc=true, filterQ='') {
+        showSpinner();
+        setTimeout(function() {
+            const users = getData('users', []);
+            let html = `<h2 class='section-title'>Users</h2>
+            <input type='text' id='userSearch' placeholder='Search users...' style='margin-bottom:10px;width:220px;'>`;
+            let rows = users.map(u => [`<span class='avatar' title='${u.username}'>${u.username[0].toUpperCase()}</span> ${u.username}`]);
+            if (filterQ) rows = filterRows(rows, filterQ);
+            if (rows.length === 0) {
+                html += `<div class='empty-msg'>No users found.</div>`;
+            } else {
+                if (!sortAsc) rows.reverse();
+                html += `<table id='usersTable'>` + makeTableHeader(['Username'], 'sortUsers') +
+                    rows.map((r,i) => `<tr><td>${r[0]}</td><td><button class='action-btn' onclick='deleteUser(${i})' title='Delete user'>Delete</button></td></tr>`).join('') +
+                    `</table>`;
+            }
+            adminMain.innerHTML = html;
+            document.getElementById('userSearch').oninput = function() { renderUsers(sortCol, sortAsc, this.value); };
+            hideSpinner();
+        }, 400);
+    }
+    window.sortUsers = function(col) { renderUsers(col, false); };
+    window.exportUsersCSV = function() {
+        const users = getData('users', []);
+        exportCSV(['Username'], users.map(u=>[u.username]), 'users.csv');
+        notify('Users exported!');
+    };
+    window.deleteUser = function(idx) {
+        if(confirm('Delete this user?')) {
+            let users = getData('users', []);
+            users.splice(idx,1);
+            setData('users', users);
+            renderUsers();
+            notify('User deleted.');
+        }
+    };
+
+    // HOSTELS MANAGEMENT
+    let hostelUndoStack = [];
+    function renderHostels(sortCol=0, sortAsc=true, filterQ='') {
+        showSpinner();
+        setTimeout(function() {
+            let hostels = getData('hostels', getData('HOSTELS', []));
+            let html = `<h2 class='section-title'>Hostels</h2>
+            <input type='text' id='hostelSearch' placeholder='Search hostels...' style='margin-bottom:10px;width:220px;'>
+            <a href="hostels.html" target="_blank" class="action-btn" title="View hostels page as a user">View as User</a>
+            <form id='bulkHostelForm' style='margin:18px 0 10px 0;display:flex;gap:10px;align-items:center;'>
+                <span style='font-weight:bold;'>Bulk update:</span>
+                <input type='number' id='bulkPriceInput' placeholder='Amount' style='width:90px;'>
+                <button class='action-btn' onclick='bulkIncreasePrice(event)' title='Increase price for selected'>+ Increase</button>
+                <button class='action-btn' onclick='bulkDecreasePrice(event)' title='Decrease price for selected'>– Decrease</button>
+                <button class='action-btn' onclick='bulkSetPrice(event)' title='Set price for selected'>Set Price</button>
+            </form>
+            <form class='add-form' id='addHostelForm' enctype='multipart/form-data'>
+                <h3>Add Hostel</h3>
+                <input type='text' id='addHostelName' placeholder='Hostel Name' required>
+                <input type='text' id='addHostelType' placeholder='Type (single, double, self-contained)' required>
+                <input type='text' id='addHostelLocation' placeholder='Location' required>
+                <input type='text' id='addHostelDistance' placeholder='Distance from university' required>
+                <input type='number' id='addHostelPrice' placeholder='Price' required>
+                <div id='addHostelDrop' style='border:2px dashed #452B1F;padding:12px 0;text-align:center;border-radius:8px;margin:8px 0;cursor:pointer;'>
+                    <span>Drag & drop images or click to select (multiple allowed)</span>
+                    <input type='file' id='addHostelImgs' accept='image/*' multiple style='display:none;'>
+                </div>
+                <div id='addHostelImgsPreview' style='display:flex;gap:8px;flex-wrap:wrap;'></div>
+                <button type='submit'>Add Hostel</button>
+            </form>`;
+            let rows = hostels.map((h,i) => [
+                `<input type='checkbox' class='hostelSelect' data-idx='${i}' tabindex='0'> ${(h.imgs&&h.imgs.length)?`<img src='${h.imgs[0]}' class='hostel-icon' alt='${h.name}' title='${h.name}'>`:''}${h.name}`,
+                h.type,
+                h.location,
+                h.distance,
+                `<button class='action-btn' onclick='decreaseHostelPrice(${i})' title='Decrease price' style='padding:2px 10px;font-size:1.2rem;'>–</button> UGX <span id='hostelPrice${i}'>${h.price}</span> <button class='action-btn' onclick='increaseHostelPrice(${i})' title='Increase price' style='padding:2px 10px;font-size:1.2rem;'>+</button><br>
+                <input type='number' id='customPrice${i}' placeholder='Custom' style='width:70px;margin:4px 0;'>
+                <button class='action-btn' onclick='setHostelPrice(${i})' title='Set custom price' style='padding:2px 10px;font-size:1.1rem;'>Set Price</button>`,
+                `<select id='hostelStatus${i}' onchange='changeHostelStatus(${i})' style='border-radius:6px;padding:2px 8px;'>
+                    <option value='Available' ${h.status==='Available'?'selected':''}>Available</option>
+                    <option value='Unavailable' ${h.status==='Unavailable'?'selected':''}>Unavailable</option>
+                    <option value='Under Maintenance' ${h.status==='Under Maintenance'?'selected':''}>Under Maintenance</option>
+                </select>`,
+                `<textarea id='hostelNote${i}' style='width:120px;height:32px;border-radius:6px;' onchange='saveHostelNote(${i})' title='Edit note/description'>${h.note||''}</textarea>`,
+                (h.imgs||[]).map((img,j)=>`<img src='${img}' style='width:28px;height:28px;border-radius:8px;object-fit:cover;margin-right:2px;' alt='img${j}'>`).join(''),
+                `<button class='action-btn' onclick='editHostel(${i})' title='Edit hostel'>Edit</button>
+                 <button class='action-btn' onclick='deleteHostel(${i})' title='Delete hostel'>Delete</button>
+                 <button class='action-btn' onclick='undoHostelChange(${i})' title='Undo last change'>Undo</button>`
+            ]);
+            if (filterQ) rows = filterRows(rows, filterQ);
+            if (rows.length === 0) {
+                html += `<div class='empty-msg'>No hostels found.</div>`;
+            } else {
+                if (!sortAsc) rows.reverse();
+                html += `<table id='hostelsTable'>` + makeTableHeader(['','Type','Location','Distance','Price','Status','Note','Images','Action'], 'sortHostels') +
+                    rows.map((r,i) => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}</td></tr>`).join('') +
+                    `</table>`;
+            }
+            adminMain.innerHTML = html;
+            document.getElementById('hostelSearch').oninput = function() { renderHostels(sortCol, sortAsc, this.value); };
+            // Drag-and-drop and preview for add
+            const drop = document.getElementById('addHostelDrop');
+            const imgsInput = document.getElementById('addHostelImgs');
+            const imgsPreview = document.getElementById('addHostelImgsPreview');
+            let imgsData = [];
+            drop.onclick = () => imgsInput.click();
+            drop.ondragover = e => { e.preventDefault(); drop.style.background='#fffbe6'; };
+            drop.ondragleave = e => { e.preventDefault(); drop.style.background=''; };
+            drop.ondrop = function(e) {
+                e.preventDefault();
+                drop.style.background='';
+                handleFiles(e.dataTransfer.files);
+            };
+            imgsInput.onchange = function() { handleFiles(imgsInput.files); };
+            function handleFiles(files) {
+                Array.from(files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imgsData.push(e.target.result);
+                        renderImgsPreview();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+            function renderImgsPreview() {
+                imgsPreview.innerHTML = imgsData.map((img,i)=>
+                    `<div style='position:relative;display:inline-block;'>
+                        <img src='${img}' style='width:60px;height:60px;border-radius:8px;object-fit:cover;margin-bottom:2px;'>
+                        <button type='button' onclick='removeAddImg(${i})' style='position:absolute;top:0;right:0;background:#ff4d4d;color:#fff;border:none;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:1rem;'>×</button>
+                        <button type='button' onclick='moveAddImg(${i},-1)' style='position:absolute;bottom:0;left:0;background:#452B1F;color:#fff;border:none;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:1rem;' title='Move left'>&lt;</button>
+                        <button type='button' onclick='moveAddImg(${i},1)' style='position:absolute;bottom:0;right:0;background:#452B1F;color:#fff;border:none;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:1rem;' title='Move right'>&gt;</button>
+                    </div>`
+                ).join('');
+            }
+            window.removeAddImg = function(i) { imgsData.splice(i,1); renderImgsPreview(); };
+            window.moveAddImg = function(i,dir) {
+                if ((dir<0 && i===0) || (dir>0 && i===imgsData.length-1)) return;
+                const t = imgsData[i]; imgsData[i]=imgsData[i+dir]; imgsData[i+dir]=t; renderImgsPreview();
+            };
+            document.getElementById('addHostelForm').onsubmit = function(e) {
+                e.preventDefault();
+                let hostels = getData('hostels', getData('HOSTELS', []));
+                hostels.push({
+                    name: document.getElementById('addHostelName').value,
+                    type: document.getElementById('addHostelType').value,
+                    location: document.getElementById('addHostelLocation').value,
+                    distance: document.getElementById('addHostelDistance').value,
+                    price: parseInt(document.getElementById('addHostelPrice').value),
+                    imgs: imgsData.slice(),
+                    status: 'Available',
+                    note: ''
+                });
+                setData('hostels', hostels);
+                notify('Hostel added!');
+                renderHostels();
+            };
+            hideSpinner();
+        }, 400);
+    }
+    window.sortHostels = function(col) { renderHostels(col, false); };
+    window.exportHostelsCSV = function() {
+        let hostels = getData('hostels', getData('HOSTELS', []));
+        exportCSV(['Name','Type','Location','Distance','Price','Image'], hostels.map(h=>[h.name,h.type,h.location,h.distance,h.price,h.img]), 'hostels.csv');
+        notify('Hostels exported!');
+    };
+    window.deleteHostel = function(idx) {
+        if(confirm('Delete this hostel?')) {
+            let hostels = getData('hostels', getData('HOSTELS', []));
+            hostels.splice(idx,1);
+            setData('hostels', hostels);
+            renderHostels();
+            notify('Hostel deleted.');
+        }
+    };
+    window.editHostel = function(idx) {
+        let hostels = getData('hostels', getData('HOSTELS', []));
+        let h = hostels[idx];
+        let html = `<h2 class='section-title'>Edit Hostel</h2>
+        <form class='edit-form' id='editHostelForm' enctype='multipart/form-data'>
+            <input type='text' id='editHostelName' value='${h.name}' required>
+            <input type='text' id='editHostelType' value='${h.type}' required>
+            <input type='text' id='editHostelLocation' value='${h.location}' required>
+            <input type='text' id='editHostelDistance' value='${h.distance}' required>
+            <input type='number' id='editHostelPrice' value='${h.price}' required>
+            <div id='editHostelDrop' style='border:2px dashed #452B1F;padding:12px 0;text-align:center;border-radius:8px;margin:8px 0;cursor:pointer;'>
+                <span>Drag & drop images or click to select (multiple allowed)</span>
+                <input type='file' id='editHostelImgs' accept='image/*' multiple style='display:none;'>
+            </div>
+            <div id='editHostelImgsPreview' style='display:flex;gap:8px;flex-wrap:wrap;'></div>
+            <button type='submit'>Save Changes</button>
+            <button type='button' onclick='renderHostels()' style='margin-left:10px;'>Cancel</button>
+        </form>`;
+        adminMain.innerHTML = html;
+        const drop = document.getElementById('editHostelDrop');
+        const imgsInput = document.getElementById('editHostelImgs');
+        const imgsPreview = document.getElementById('editHostelImgsPreview');
+        let imgsData = (h.imgs||[]).slice();
+        drop.onclick = () => imgsInput.click();
+        drop.ondragover = e => { e.preventDefault(); drop.style.background='#fffbe6'; };
+        drop.ondragleave = e => { e.preventDefault(); drop.style.background=''; };
+        drop.ondrop = function(e) {
+            e.preventDefault();
+            drop.style.background='';
+            handleFiles(e.dataTransfer.files);
+        };
+        imgsInput.onchange = function() { handleFiles(imgsInput.files); };
+        function handleFiles(files) {
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imgsData.push(e.target.result);
+                    renderImgsPreview();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        function renderImgsPreview() {
+            imgsPreview.innerHTML = imgsData.map((img,i)=>
+                `<div style='position:relative;display:inline-block;'>
+                    <img src='${img}' style='width:60px;height:60px;border-radius:8px;object-fit:cover;margin-bottom:2px;'>
+                    <button type='button' onclick='removeEditImg(${i})' style='position:absolute;top:0;right:0;background:#ff4d4d;color:#fff;border:none;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:1rem;'>×</button>
+                    <button type='button' onclick='moveEditImg(${i},-1)' style='position:absolute;bottom:0;left:0;background:#452B1F;color:#fff;border:none;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:1rem;' title='Move left'>&lt;</button>
+                    <button type='button' onclick='moveEditImg(${i},1)' style='position:absolute;bottom:0;right:0;background:#452B1F;color:#fff;border:none;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:1rem;' title='Move right'>&gt;</button>
+                </div>`
+            ).join('');
+        }
+        window.removeEditImg = function(i) { imgsData.splice(i,1); renderImgsPreview(); };
+        window.moveEditImg = function(i,dir) {
+            if ((dir<0 && i===0) || (dir>0 && i===imgsData.length-1)) return;
+            const t = imgsData[i]; imgsData[i]=imgsData[i+dir]; imgsData[i+dir]=t; renderImgsPreview();
+        };
+        renderImgsPreview();
+        document.getElementById('editHostelForm').onsubmit = function(e) {
+            e.preventDefault();
+            hostelUndoStack[idx] = JSON.parse(JSON.stringify(hostels[idx]));
+            hostels[idx] = {
+                name: document.getElementById('editHostelName').value,
+                type: document.getElementById('editHostelType').value,
+                location: document.getElementById('editHostelLocation').value,
+                distance: document.getElementById('editHostelDistance').value,
+                price: parseInt(document.getElementById('editHostelPrice').value),
+                imgs: imgsData,
+                status: h.status,
+                note: h.note
+            };
+            setData('hostels', hostels);
+            notify('Hostel updated!');
+            renderHostels();
+        };
+    };
+    window.increaseHostelPrice = function(idx) {
+        let hostels = getData('hostels', getData('HOSTELS', []));
+        hostelUndoStack[idx] = JSON.parse(JSON.stringify(hostels[idx]));
+        hostels[idx].price = (parseInt(hostels[idx].price)||0) + 10000;
+        setData('hostels', hostels);
+        notify('Hostel price increased!');
+        renderHostels();
+    };
+    window.decreaseHostelPrice = function(idx) {
+        let hostels = getData('hostels', getData('HOSTELS', []));
+        hostelUndoStack[idx] = JSON.parse(JSON.stringify(hostels[idx]));
+        hostels[idx].price = Math.max(0, (parseInt(hostels[idx].price)||0) - 10000);
+        setData('hostels', hostels);
+        notify('Hostel price decreased!');
+        renderHostels();
+    };
+    window.setHostelPrice = function(idx) {
+        let hostels = getData('hostels', getData('HOSTELS', []));
+        let val = parseInt(document.getElementById('customPrice'+idx).value);
+        if (isNaN(val) || val < 0) { notify('Invalid price!','error'); return; }
+        hostelUndoStack[idx] = JSON.parse(JSON.stringify(hostels[idx]));
+        hostels[idx].price = val;
+        setData('hostels', hostels);
+        notify('Hostel price set!');
+        renderHostels();
+    };
+    window.changeHostelStatus = function(idx) {
+        let hostels = getData('hostels', getData('HOSTELS', []));
+        hostelUndoStack[idx] = JSON.parse(JSON.stringify(hostels[idx]));
+        hostels[idx].status = document.getElementById('hostelStatus'+idx).value;
+        setData('hostels', hostels);
+        notify('Hostel status updated!');
+    };
+    window.saveHostelNote = function(idx) {
+        let hostels = getData('hostels', getData('HOSTELS', []));
+        hostelUndoStack[idx] = JSON.parse(JSON.stringify(hostels[idx]));
+        hostels[idx].note = document.getElementById('hostelNote'+idx).value;
+        setData('hostels', hostels);
+        notify('Hostel note saved!');
+    };
+    window.bulkIncreasePrice = function(e) {
+        e.preventDefault();
+        let amount = parseInt(document.getElementById('bulkPriceInput').value);
+        if (isNaN(amount) || amount <= 0) { notify('Invalid amount!','error'); return; }
+        let hostels = getData('hostels', getData('HOSTELS', []));
+        document.querySelectorAll('.hostelSelect:checked').forEach(cb => {
+            let idx = parseInt(cb.getAttribute('data-idx'));
+            hostelUndoStack[idx] = JSON.parse(JSON.stringify(hostels[idx]));
+            hostels[idx].price = (parseInt(hostels[idx].price)||0) + amount;
+        });
+        setData('hostels', hostels);
+        notify('Bulk price increase!');
+        renderHostels();
+    };
+    window.bulkDecreasePrice = function(e) {
+        e.preventDefault();
+        let amount = parseInt(document.getElementById('bulkPriceInput').value);
+        if (isNaN(amount) || amount <= 0) { notify('Invalid amount!','error'); return; }
+        let hostels = getData('hostels', getData('HOSTELS', []));
+        document.querySelectorAll('.hostelSelect:checked').forEach(cb => {
+            let idx = parseInt(cb.getAttribute('data-idx'));
+            hostelUndoStack[idx] = JSON.parse(JSON.stringify(hostels[idx]));
+            hostels[idx].price = Math.max(0, (parseInt(hostels[idx].price)||0) - amount);
+        });
+        setData('hostels', hostels);
+        notify('Bulk price decrease!');
+        renderHostels();
+    };
+    window.bulkSetPrice = function(e) {
+        e.preventDefault();
+        let amount = parseInt(document.getElementById('bulkPriceInput').value);
+        if (isNaN(amount) || amount < 0) { notify('Invalid amount!','error'); return; }
+        let hostels = getData('hostels', getData('HOSTELS', []));
+        document.querySelectorAll('.hostelSelect:checked').forEach(cb => {
+            let idx = parseInt(cb.getAttribute('data-idx'));
+            hostelUndoStack[idx] = JSON.parse(JSON.stringify(hostels[idx]));
+            hostels[idx].price = amount;
+        });
+        setData('hostels', hostels);
+        notify('Bulk set price!');
+        renderHostels();
+    };
+    window.undoHostelChange = function(idx) {
+        let hostels = getData('hostels', getData('HOSTELS', []));
+        if (hostelUndoStack[idx]) {
+            hostels[idx] = hostelUndoStack[idx];
+            setData('hostels', hostels);
+            notify('Undo successful!');
+            renderHostels();
+        } else {
+            notify('Nothing to undo.','error');
+        }
+    };
+
+    // BOOKINGS MANAGEMENT
+    function renderBookings(sortCol=0, sortAsc=true, filterQ='') {
+        showSpinner();
+        setTimeout(function() {
+            const bookings = getData('bookings', []);
+            let html = `<h2 class='section-title'>Bookings</h2>
+            <input type='text' id='bookingSearch' placeholder='Search bookings...' style='margin-bottom:10px;width:220px;'>
+            <button class='action-btn' onclick='exportBookingsCSV()' title='Export bookings to CSV'>Export CSV</button>`;
+            let rows = bookings.map(b => [`<img src='${b.img||"1 (2).jpg"}' class='hostel-icon' alt='${b.name}' title='${b.name}'>${b.name || b.hostel || 'N/A'}`, `<span class='avatar' title='${b.user||'N/A'}'>${(b.user||'N/A')[0].toUpperCase()}</span> ${b.user||'N/A'}`]);
+            if (filterQ) rows = filterRows(rows, filterQ);
+            if (rows.length === 0) {
+                html += `<div class='empty-msg'>No bookings found.</div>`;
+            } else {
+                if (!sortAsc) rows.reverse();
+                html += `<table id='bookingsTable'>` + makeTableHeader(['Hostel','User'], 'sortBookings') +
+                    rows.map((r,i) => `<tr><td>${r[0]}</td><td>${r[1]}</td><td><button class='action-btn' onclick='deleteBooking(${i})' title='Delete booking'>Delete</button></td></tr>`).join('') +
+                    `</table>`;
+            }
+            adminMain.innerHTML = html;
+            document.getElementById('bookingSearch').oninput = function() { renderBookings(sortCol, sortAsc, this.value); };
+            hideSpinner();
+        }, 400);
+    }
+    window.sortBookings = function(col) { renderBookings(col, false); };
+    window.exportBookingsCSV = function() {
+        const bookings = getData('bookings', []);
+        exportCSV(['Hostel','User'], bookings.map(b=>[b.name||b.hostel||'N/A',b.user||'N/A']), 'bookings.csv');
+        notify('Bookings exported!');
+    };
+    window.deleteBooking = function(idx) {
+        if(confirm('Delete this booking?')) {
+            let bookings = getData('bookings', []);
+            bookings.splice(idx,1);
+            setData('bookings', bookings);
+            renderBookings();
+            notify('Booking deleted.');
+        }
+    };
+
+    // PAYMENTS MANAGEMENT
+    function renderPayments(sortCol=0, sortAsc=true, filterQ='') {
+        showSpinner();
+        setTimeout(function() {
+            const payments = getData('payments', []);
+            let html = `<h2 class='section-title'>Payments</h2>
+            <input type='text' id='paymentSearch' placeholder='Search payments...' style='margin-bottom:10px;width:220px;'>
+            <button class='action-btn' onclick='exportPaymentsCSV()' title='Export payments to CSV'>Export CSV</button>`;
+            let rows = payments.map(p => [p.amount, p.network || 'N/A', p.number || 'N/A', `<span class='avatar' title='${p.user||'N/A'}'>${(p.user||'N/A')[0].toUpperCase()}</span> ${p.user||'N/A'}`]);
+            if (filterQ) rows = filterRows(rows, filterQ);
+            if (rows.length === 0) {
+                html += `<div class='empty-msg'>No payments found.</div>`;
+            } else {
+                if (!sortAsc) rows.reverse();
+                html += `<table id='paymentsTable'>` + makeTableHeader(['Amount','Network','Number','User'], 'sortPayments') +
+                    rows.map((r,i) => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td><button class='action-btn' onclick='deletePayment(${i})' title='Delete payment'>Delete</button></td></tr>`).join('') +
+                    `</table>`;
+            }
+            adminMain.innerHTML = html;
+            document.getElementById('paymentSearch').oninput = function() { renderPayments(sortCol, sortAsc, this.value); };
+            hideSpinner();
+        }, 400);
+    }
+    window.sortPayments = function(col) { renderPayments(col, false); };
+    window.exportPaymentsCSV = function() {
+        const payments = getData('payments', []);
+        exportCSV(['Amount','Network','Number','User'], payments.map(p=>[p.amount,p.network||'N/A',p.number||'N/A',p.user||'N/A']), 'payments.csv');
+        notify('Payments exported!');
+    };
+    window.deletePayment = function(idx) {
+        if(confirm('Delete this payment?')) {
+            let payments = getData('payments', []);
+            payments.splice(idx,1);
+            setData('payments', payments);
+            renderPayments();
+            notify('Payment deleted.');
+        }
+    };
+
+    // STATISTICS
+    function renderStats() {
+        showSpinner();
+        setTimeout(function() {
+            const users = getData('users', []);
+            const hostels = getData('hostels', getData('HOSTELS', []));
+            const bookings = getData('bookings', []);
+            const payments = getData('payments', []);
+            // Bookings per hostel
+            let hostelCounts = {};
+            bookings.forEach(b => { hostelCounts[b.name] = (hostelCounts[b.name]||0)+1; });
+            let hostelNames = Object.keys(hostelCounts);
+            let hostelVals = hostelNames.map(n=>hostelCounts[n]);
+            // Hostel type distribution
+            let typeCounts = {};
+            hostels.forEach(h => { typeCounts[h.type] = (typeCounts[h.type]||0)+1; });
+            let typeNames = Object.keys(typeCounts);
+            let typeVals = typeNames.map(n=>typeCounts[n]);
+            // Payments per hostel
+            let paymentCounts = {};
+            bookings.forEach((b,i) => {
+                let p = payments[i];
+                if (b && p) paymentCounts[b.name] = (paymentCounts[b.name]||0) + (parseInt(p.amount)||0);
+            });
+            let payNames = Object.keys(paymentCounts);
+            let payVals = payNames.map(n=>paymentCounts[n]);
+            // Pie chart helper
+            function pieChart(values, colors, doughnut=false) {
+                let total = values.reduce((a,b)=>a+b,0);
+                let angle = 0, paths = '';
+                for(let i=0;i<values.length;i++){
+                    let v = values[i], a = v/total*360, r = 60, x = 100 + r*Math.cos((angle-90)*Math.PI/180), y = 100 + r*Math.sin((angle-90)*Math.PI/180);
+                    angle += a;
+                    let x2 = 100 + r*Math.cos((angle-90)*Math.PI/180), y2 = 100 + r*Math.sin((angle-90)*Math.PI/180);
+                    let large = a>180?1:0;
+                    paths += `<path d='M100,100 L${x},${y} A${r},${r} 0 ${large},1 ${x2},${y2} Z' fill='${colors[i%colors.length]}'></path>`;
+                }
+                let donut = doughnut ? "<circle cx='100' cy='100' r='30' fill='#fff'></circle>" : '';
+                return `<svg width='200' height='200'>${paths}${donut}</svg>`;
+            }
+            // Bar chart helper
+            function barChart(labels, values, color) {
+                let max = Math.max(...values,1);
+                let bars = values.map((v,i)=>`<rect x='${30+i*40}' y='${180-v/max*150}' width='30' height='${v/max*150}' fill='${color}'><title>${labels[i]}: ${v}</title></rect>`).join('');
+                let lbls = labels.map((l,i)=>`<text x='${45+i*40}' y='195' font-size='12' text-anchor='middle'>${l.slice(0,8)}</text>`).join('');
+                return `<svg width='${labels.length*40+40}' height='210'>${bars}${lbls}</svg>`;
+            }
+            // Line chart helper (payments over time)
+            function lineChart(values, color) {
+                if (values.length < 2) return '<div style="color:#888;">Not enough data</div>';
+                let max = Math.max(...values,1);
+                let points = values.map((v,i)=>`${30+i*40},${180-v/max*150}`).join(' ');
+                let circles = values.map((v,i)=>`<circle cx='${30+i*40}' cy='${180-v/max*150}' r='4' fill='${color}'><title>${v}</title></circle>`).join('');
+                return `<svg width='${values.length*40+40}' height='210'><polyline fill='none' stroke='${color}' stroke-width='3' points='${points}'/>${circles}</svg>`;
+            }
+            // Doughnut chart for user registration by first letter
+            let letterCounts = {};
+            users.forEach(u=>{ let l=u.username[0].toUpperCase(); letterCounts[l]=(letterCounts[l]||0)+1; });
+            let letterNames = Object.keys(letterCounts);
+            let letterVals = letterNames.map(n=>letterCounts[n]);
+            let html = `<h2 class='section-title'>Site Statistics</h2>
+            <ul>
+                <li><b>Total Users:</b> ${users.length}</li>
+                <li><b>Total Hostels:</b> ${hostels.length}</li>
+                <li><b>Total Bookings:</b> ${bookings.length}</li>
+                <li><b>Total Payments:</b> ${payments.length}</li>
+            </ul>
+            <div class='chart-container'>
+                <div class='chart-title'>Bookings per Hostel</div>
+                ${barChart(hostelNames, hostelVals, '#452B1F') || '<div style="color:#888;">No data</div>'}
+            </div>
+            <div class='chart-container'>
+                <div class='chart-title'>Hostel Type Distribution</div>
+                ${typeVals.length>0 ? pieChart(typeVals, ['#452B1F','#ff4d4d','#ffb84d','#4d79ff','#4dffb8']) : '<div style="color:#888;">No data</div>'}
+                <div style='margin-top:10px;'>${typeNames.map((n,i)=>`<span style='display:inline-block;width:14px;height:14px;background:${['#452B1F','#ff4d4d','#ffb84d','#4d79ff','#4dffb8'][i%5]};margin-right:6px;border-radius:3px;'></span>${n}`).join(' &nbsp; ')}</div>
+            </div>
+            <div class='chart-container'>
+                <div class='chart-title'>Total Payments per Hostel</div>
+                ${barChart(payNames, payVals, '#ffb84d') || '<div style="color:#888;">No data</div>'}
+            </div>
+            <div class='chart-container'>
+                <div class='chart-title'>Payments Over Time</div>
+                ${lineChart(payments.map(p=>parseInt(p.amount)||0), '#4d79ff')}
+            </div>
+            <div class='chart-container'>
+                <div class='chart-title'>User Registration by First Letter</div>
+                ${letterVals.length>0 ? pieChart(letterVals, ['#452B1F','#ff4d4d','#ffb84d','#4d79ff','#4dffb8'], true) : '<div style="color:#888;">No data</div>'}
+                <div style='margin-top:10px;'>${letterNames.map((n,i)=>`<span style='display:inline-block;width:14px;height:14px;background:${['#452B1F','#ff4d4d','#ffb84d','#4d79ff','#4dffb8'][i%5]};margin-right:6px;border-radius:3px;'></span>${n}`).join(' &nbsp; ')}</div>
+            </div>`;
+            adminMain.innerHTML = html;
+            hideSpinner();
+        }, 400);
+    }
+
+    // Default: show welcome
+    function showWelcome() {
+        adminMain.innerHTML = `<h2>Welcome, Admin!</h2><p>Use the navigation above to manage users, bookings, payments, and view site statistics.</p>`;
+    }
+    // Highlight nav
+    function highlightNav(id) {
+        document.querySelectorAll('.admin-nav a').forEach(a => a.classList.remove('active'));
+        if (id) document.getElementById(id).classList.add('active');
+    }
+    // Nav event listeners
+    document.getElementById('navUsers').addEventListener('click', function(){ highlightNav('navUsers'); });
+    document.getElementById('navHostels').addEventListener('click', function(){ highlightNav('navHostels'); });
+    document.getElementById('navBookings').addEventListener('click', function(){ highlightNav('navBookings'); });
+    document.getElementById('navPayments').addEventListener('click', function(){ highlightNav('navPayments'); });
+    document.getElementById('navStats').addEventListener('click', function(){ highlightNav('navStats'); });
+    document.getElementById('navMessages').addEventListener('click', function(){ highlightNav('navMessages'); });
+    document.getElementById('navAdmins').addEventListener('click', function(){ highlightNav('navAdmins'); });
+    
+    // Default: show hostel management
+    window.onload = function() {
+        renderHostels();
+        highlightNav();
+    }
+
+    function renderMessages() {
+        showSpinner();
+        setTimeout(function() {
+            const messages = getData('contactMessages', []);
+            let html = `<h2 class='section-title'>Contact Messages</h2>
+            <div style='margin-bottom:10px;'>Below are messages sent from the contact page. Click Reply to respond via email.</div>`;
+            if (messages.length === 0) {
+                html += `<div class='empty-msg'>No messages found.</div>`;
+            } else {
+                html += `<table id='messagesTable'><tr><th>Email</th><th>Message</th><th>Action</th></tr>` +
+                    messages.map((m,i) => `<tr><td>${m.email}</td><td>${m.message}</td><td><button class='action-btn' onclick='replyMessage(${i})'>Reply</button></td></tr>`).join('') +
+                    `</table>`;
+            }
+            adminMain.innerHTML = html;
+            hideSpinner();
+        }, 400);
+    }
+    // Modal for file upload and message
+    function showResponseModal(email, callback) {
+        let modal = document.createElement('div');
+        modal.id = 'responseModal';
+        modal.style = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.4);z-index:9999;display:flex;align-items:center;justify-content:center;';
+        modal.innerHTML = `<div style='background:#fff;padding:24px 18px;border-radius:10px;min-width:320px;max-width:90vw;box-shadow:0 2px 16px #0002;position:relative;'>
+            <button id='closeResponseModal' style='position:absolute;top:8px;right:12px;font-size:18px;background:none;border:none;cursor:pointer;'>&times;</button>
+            <h3>Send Response</h3>
+            <form id='responseForm'>
+                <label>Message:<br><textarea id='responseMsg' rows='4' style='width:100%;margin-bottom:10px;' required></textarea></label><br>
+                <label>Attach file:<br><input type='file' id='responseFile' style='margin-bottom:10px;'></label><br>
+                <button type='submit'>Send</button>
+            </form>
+        </div>`;
+        document.body.appendChild(modal);
+        document.getElementById('closeResponseModal').onclick = function() { document.body.removeChild(modal); };
+        document.getElementById('responseForm').onsubmit = function(e) {
+            e.preventDefault();
+            const msg = document.getElementById('responseMsg').value;
+            const fileInput = document.getElementById('responseFile');
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    const dataUrl = ev.target.result;
+                    // Save file in localStorage (for demo, use a random key)
+                    const fileKey = 'uploadedFile_' + Date.now();
+                    localStorage.setItem(fileKey, dataUrl);
+                    const downloadLink = window.location.origin + window.location.pathname + `?download=${fileKey}&filename=${encodeURIComponent(file.name)}`;
+                    callback(msg, downloadLink, file.name);
+                    document.body.removeChild(modal);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                callback(msg, null, null);
+                document.body.removeChild(modal);
+            }
+        };
+    }
+    // Download handler
+    if (window.location.search.includes('download=')) {
+        const params = new URLSearchParams(window.location.search);
+        const fileKey = params.get('download');
+        const filename = params.get('filename') || 'file';
+        const dataUrl = localStorage.getItem(fileKey);
+        if (dataUrl) {
+            const a = document.createElement('a');
+            a.href = dataUrl;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    }
+
+    function renderAdmins() {
+        showSpinner();
+        setTimeout(function() {
+            let admins = getData('admins', []);
+            // Migrate hardcoded admin if not present
+            if (!admins.some(a => a.username === 'admin')) {
+                admins.push({ username: 'admin', password: 'admin123', email: 'admin@hostelhub.com' });
+                setData('admins', admins);
+            }
+            const loggedInAdmin = localStorage.getItem('adminUser') || 'admin';
+            let html = `<h2 class='section-title'>Admins</h2>
+            <form id='addAdminForm' class='add-form' style='margin-bottom:18px;'>
+                <h3>Add New Admin</h3>
+                <input type='text' id='newAdminUsername' placeholder='Username' required style='margin-bottom:6px;'>
+                <input type='password' id='newAdminPassword' placeholder='Password' required style='margin-bottom:6px;'>
+                <input type='email' id='newAdminEmail' placeholder='Email' required style='margin-bottom:6px;'>
+                <button type='submit'>Add Admin</button>
+            </form>`;
+            if (admins.length === 0) {
+                html += `<div class='empty-msg'>No admins found.</div>`;
+            } else {
+                html += `<table id='adminsTable'><tr><th>Username</th><th>Email</th><th>Action</th></tr>` +
+                    admins.map((a,i) => `<tr><td>${a.username}</td><td>${a.email}</td><td>${a.username === loggedInAdmin ? '<span style="color:#888;">Current</span>' : `<button class='action-btn' onclick='deleteAdmin(${i})'>Delete</button>`}</td></tr>`).join('') +
+                    `</table>`;
+            }
+            adminMain.innerHTML = html;
+            document.getElementById('addAdminForm').onsubmit = function(e) {
+                e.preventDefault();
+                const username = document.getElementById('newAdminUsername').value.trim();
+                const password = document.getElementById('newAdminPassword').value;
+                const email = document.getElementById('newAdminEmail').value.trim();
+                if (!username || !password || !email) {
+                    alert('All fields are required.');
+                    return;
+                }
+                if (admins.some(a => a.username === username)) {
+                    alert('Admin username already exists.');
+                    return;
+                }
+                admins.push({ username, password, email });
+                setData('admins', admins);
+                alert('Admin added successfully!');
+                renderAdmins();
+            };
+            hideSpinner();
+        }, 400);
+    }
+    window.deleteAdmin = function(idx) {
+        let admins = getData('admins', []);
+        const loggedInAdmin = localStorage.getItem('adminUser') || 'admin';
+        if (admins[idx].username === loggedInAdmin) {
+            alert('You cannot delete the currently logged-in admin.');
+            return;
+        }
+        if (confirm('Are you sure you want to delete this admin?')) {
+            admins.splice(idx, 1);
+            setData('admins', admins);
+            renderAdmins();
+        }
+    };
+
+    // Update replyMessage and respondBooking
+    window.replyMessage = function(idx) {
+        const messages = getData('contactMessages', []);
+        const msg = messages[idx];
+        showResponseModal(msg.email, function(response, downloadLink, filename) {
+            let body = response;
+            if (downloadLink) {
+                body += `\n\nDownload your file here: ${downloadLink}`;
+            }
+            window.location.href = `mailto:${msg.email}?subject=Response to your message&body=${encodeURIComponent(body)}`;
+        });
+    };
+    window.respondBooking = function(idx) {
+        const bookings = getData('bookings', []);
+        const booking = bookings[idx];
+        const userEmail = getUserEmail(booking.user);
+        if (!userEmail) {
+            alert('No email found for this user.');
+            return;
+        }
+        showResponseModal(userEmail, function(response, downloadLink, filename) {
+            let body = response;
+            if (downloadLink) {
+                body += `\n\nDownload your file here: ${downloadLink}`;
+            }
+            window.location.href = `mailto:${userEmail}?subject=Response to your booking&body=${encodeURIComponent(body)}`;
+        });
+    };
+    </script>
+</body>
+</html> 

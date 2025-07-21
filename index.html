@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="utf-8">
+    <title>Hostelhub</title>
+        <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f7f6f3;
+            margin: 0;
+            padding: 0;
+            overflow-y: auto; /* Enable vertical scrolling */
+            color: #222;
+        }
+        .bg-overlay {
+            position: fixed;
+            top: 20px; left: 0; width: 100vw; height: 100vh;
+            background: rgba(69,43,31,0.45);
+            z-index: 0;
+            min-height: 100vh;
+            overflow-y: auto; /* Allow scrolling inside overlay if needed */
+            margin-bottom: 32px; /* Add space below overlay if needed */
+            }
+        .container {
+            max-width: 1100px;
+            margin: 40px auto 100px auto;
+            background: rgba(255,255,255,0.95);
+            border-radius: 16px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+            padding: 40px 30px;
+            position: relative;
+            z-index: 1;
+            margin-top: 0; /* Remove margin-top, spacing is now on header */
+            }
+        .header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+           }
+        .header-side {
+            width: 80px;
+                display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .header-center {
+            flex: 1;
+                display: flex;
+                justify-content: center;
+            align-items: center;
+            position: absolute;
+            left: 0;
+            right: 0;
+            pointer-events: none;
+        }
+        .header-center h1 {
+            color: red;
+            font-size: 2.5rem;
+            margin: 0;
+            pointer-events: auto;
+        }
+        #dashboardIcon {
+            cursor: pointer;
+            margin-left: 0;
+        }
+        #dashboardIcon img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            vertical-align: middle;
+        }
+        .register-link img {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+        }
+        #dashboardMenu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 10px;
+            background: #fff;
+            color: #222;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            padding: 25px 35px;
+            z-index: 2000;
+            min-width: 250px;
+        }
+        #dashboardMenu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #dashboardMenu li {
+            margin-bottom: 10px;
+        }
+        #dashboardMenu li:last-child {
+            margin-bottom: 0;
+            }
+        #dashboardMenu a {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            text-decoration: none;
+            color: #452B1F;
+            transition: color 0.2s;
+        }
+        #dashboardMenu a:hover {
+            color: #ff4d4d;
+        }
+            .search-bar-container {
+            width: 100%;
+            margin: 40px 0 20px 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+        }
+        .search-input-wrapper {
+            position: relative;
+            width: 100%;
+            }
+            .search-input {
+            width: 100%;
+            padding: 18px 50px 18px 24px;
+            border-radius: 20px;
+                border: 2px solid #452B1F;
+                font-size: 1.5rem;
+            outline: none;
+            box-sizing: border-box;
+            background: linear-gradient(90deg,#fff,#fffbe6);
+            transition: box-shadow 0.2s;
+        }
+        .search-input:focus {
+            box-shadow: 0 2px 12px #ffb84d;
+        }
+        .search-icon-btn {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+        .main-image {
+            margin-top: 40px;
+        }
+        .main-image img {
+                width: 100%;
+            border-radius: 30px;
+            animation: fadeIn 2s;
+            box-shadow: 0 4px 32px rgba(255,184,77,0.18);
+            transition: box-shadow 0.2s,transform 0.2s;
+        }
+        .main-image img:hover {
+            box-shadow: 0 8px 48px #ffb84d;
+            transform: scale(1.01);
+            }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .footer {
+                background: #452B1F;
+                color: #fff;
+                text-align: center;
+            padding: 24px 0 16px 0;
+                position: fixed;
+                width: 100vw;
+                bottom: 0;
+                left: 0;
+            z-index: 1000;
+            }
+        .header {
+            height: 32px; /* Empty header for spacing */
+            width: 100%;
+            display: block;
+        }
+        .image-banner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 28px;
+            margin-top: 10px;
+        }
+        .image-banner img {
+            max-width: 220px;
+            width: 100%;
+            height: auto;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(69,43,31,0.13);
+            object-fit: cover;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .image-banner img:hover {
+            transform: scale(1.04);
+            box-shadow: 0 8px 32px rgba(255,77,77,0.18);
+        }
+        @media (max-width: 700px) {
+            .container { padding: 0 2vw; }
+            .header-row { flex-direction: column; gap: 10px; padding: 18px 4vw 0 4vw; }
+            .main-image img { border-radius: 16px; }
+            .image-banner {
+                flex-direction: column;
+                gap: 14px;
+            }
+            .image-banner img {
+                max-width: 95vw;
+            }
+            }
+            .header-center{
+                 background: #452B1F;
+                color: #fff;
+                text-align: center;
+            padding: 24px 0 16px 0;
+                position: fixed;
+                width: 100vw;
+                top: 0;
+                left: 0;
+            z-index: 1000;
+
+            }
+        /* Adjust z-index and positioning if needed */
+        .header-row, .container {
+            position: relative;
+            z-index: 1;
+        }
+        .bg-overlay {
+            z-index: 0;
+        }
+        .header-icon-img {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 2px 10px rgba(69,43,31,0.13);
+            background: #fff;
+            transition: transform 0.18s, box-shadow 0.18s;
+            margin: 0 6px;
+            vertical-align: middle;
+        }
+        .header-icon-img:hover {
+            transform: scale(1.08) rotate(-6deg);
+            box-shadow: 0 4px 18px rgba(255,77,77,0.18);
+        }
+        .site-logo {
+            display: block;
+            margin: 0 auto 10px auto;
+            width: 120px;
+            height: auto;
+        }
+        .footer-links {
+            margin-bottom: 15px;
+        }
+        .footer-links a {
+            color: #ffb84d;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+        .footer-links a:hover {
+            color: #fff;
+        }
+        .header-side {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+        .top-icons-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 32px;
+            margin-bottom: 18px;
+            margin-top: 8px;
+        }
+        @media (max-width: 700px) {
+            .top-icons-bar { gap: 16px; }
+        }
+        .top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            margin-bottom: 18px;
+            margin-top: 8px;
+        }
+        .top-row .center-heading {
+            flex: 1;
+            text-align: center;
+            font-size: 2.1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #452B1F;
+        }
+        @media (max-width: 700px) {
+            .top-row .center-heading { font-size: 1.2rem; }
+            .header-icon-img { width: 30px; height: 30px; }
+        }
+        
+  
+        </style>
+</head>
+    <body>
+        <div class="bg-overlay">
+            <div class="header"></div>
+            <div class="header-row">
+                <div class="header-side">
+                    <!-- Removed dashboard icon from here -->
+                </div>
+                <div class="header-center">
+                </div>
+                <div class="header-side" style="justify-content: flex-end;">
+                    <!-- Removed register/login icon from here -->
+                </div>
+            </div>
+            <div class="container">
+                <img src="MTN LOGO.png" class="site-logo">
+                <div class="top-row">
+                    <div style="position: relative;">
+                        <span id="dashboardIcon">
+                            <img src="dashboard.png" alt="Dashboard" class="header-icon-img">
+                        </span>
+                        <div id="dashboardMenu">
+                            <ul>
+                                <li><a href="about.html">About Us</a></li>
+                                <li><a href="terms.html">Terms & Conditions</a></li>
+                                <li><a href="help.html">Help & FAQs</a></li>
+                                <li><a href="hostels.html">Available Hostels</a></li>
+                                <li><a href="bookings.html">Bookings</a></li>
+                                <li id="homeLoginLink"><a href="login.html">Login</a></li>
+                                <li id="homeRegisterLink"><a href="register.html">Register</a></li>
+                                <li><a href="contact.html">Contact</a></li>
+                                <li id="homeLogoutLink" style="display: none;"><a href="#" id="homeLogoutBtn">Logout</a></li>
+                                <li><a href="admin-login.html">Admin Login</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="center-heading">HOSTELHUB</div>
+                    <a class="register-link" href="login.html">
+                        <img src="regester.jpeg" alt="Register/Login" class="header-icon-img">
+                    </a>
+                </div>
+                
+                <div class="search-bar-container">
+                    <div class="search-input-wrapper">
+                        <input class="search-input" id="searchInput" type="search" placeholder="Search hostels, locations, types...">
+                        <button class="search-icon-btn" id="searchBtn" tabindex="-1">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#452B1F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="main-image">
+                    <img src="kihumurohallls.png">
+                </div>
+            </div>
+        </div>
+        <footer class="footer">
+            <div class="footer-links">
+                <a href="about.html">About Us</a>
+                <a href="terms.html">Terms & Conditions</a>
+                <a href="help.html">Help & FAQs</a>
+            </div>
+            <p>&copy; 2023 HostelHub. All rights reserved.</p>
+        </footer>
+        <script>
+        // Dashboard menu logic for home page only
+        document.getElementById('dashboardIcon').onclick = function(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('dashboardMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        };
+        document.body.onclick = function(e) {
+            const menu = document.getElementById('dashboardMenu');
+            if (menu) menu.style.display = 'none';
+        };
+        // Search functionality
+        function doSearch() {
+            const value = document.getElementById('searchInput').value.trim();
+            if (value) {
+                // You can implement actual search logic here or redirect to hostels.html with a query
+                window.location.href = 'hostels.html?search=' + encodeURIComponent(value);
+            }
+        }
+        document.getElementById('searchBtn').onclick = function(e) {
+            e.preventDefault();
+            doSearch();
+        };
+        document.getElementById('searchInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                doSearch();
+            }
+        });
+
+        // Login/logout visibility logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            const loginLink = document.getElementById('homeLoginLink');
+            const registerLink = document.getElementById('homeRegisterLink');
+            const logoutLink = document.getElementById('homeLogoutLink');
+
+            if (loggedInUser) {
+                if (loginLink) loginLink.style.display = 'none';
+                if (registerLink) registerLink.style.display = 'none';
+                if (logoutLink) logoutLink.style.display = 'block';
+            } else {
+                if (loginLink) loginLink.style.display = 'block';
+                if (registerLink) registerLink.style.display = 'block';
+                if (logoutLink) logoutLink.style.display = 'none';
+            }
+            
+            const logoutBtn = document.getElementById('homeLogoutBtn');
+            if(logoutBtn) {
+                logoutBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    localStorage.removeItem('loggedInUser');
+                    window.location.href = 'login.html';
+                });
+            }
+        });
+        </script>
+        <script src="script.js"></script>
+    </body>
+</html> 

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Admin Login - Hostelhub</title>
+    <style>
+        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #f9f9f9; color: #222; }
+        .container { max-width: 500px; margin: 60px auto 100px auto; background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.07); padding: 40px 30px; }
+        .header-row { display: flex; align-items: center; justify-content: space-between; position: relative; }
+        .header-side { width: 80px; display: flex; align-items: center; justify-content: flex-start; }
+        .header-center { flex: 1; display: flex; justify-content: center; align-items: center; position: absolute; left: 0; right: 0; pointer-events: none; }
+        .header-center h1 { color: red; font-size: 2.5rem; margin: 0; pointer-events: auto; }
+        #dashboardIcon { cursor: pointer; margin-left: 0; }
+        #dashboardIcon img { width: 40px; height: 40px; border-radius: 50%; vertical-align: middle; }
+        .register-link img { width: 40px; height: 40px; border-radius: 20px; }
+        #dashboardMenu { display: none; position: absolute; right: 40px; top: 90px; background: #fff; color: #222; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.15); padding: 18px 24px; z-index: 2000; }
+        #dashboardMenu ul { list-style: none; padding: 0; margin: 0; }
+        #dashboardMenu li { margin-bottom: 10px; }
+        #dashboardMenu li:last-child { margin-bottom: 0; }
+        .admin-login-title { text-align: center; color: #452B1F; margin-bottom: 30px; }
+        .admin-login-form input[type="text"], .admin-login-form input[type="password"] { width: 100%; padding: 14px; margin: 12px 0 20px 0; border: 1.5px solid #452B1F; border-radius: 8px; font-size: 1rem; }
+        .admin-login-form button { background: #452B1F; color: #fff; border: none; border-radius: 20px; padding: 12px 32px; font-size: 1.1rem; cursor: pointer; transition: background 0.2s; width: 100%; }
+        .admin-login-form button:hover { background: #ff4d4d; }
+        .error-msg { color: red; text-align: center; margin-bottom: 10px; }
+        .footer { background: #452B1F; color: #fff; text-align: center; padding: 24px 0 16px 0; position: fixed; width: 100vw; bottom: 0; left: 0; z-index: 1000; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-row">
+            <div class="header-side">
+                <span id="dashboardIcon">
+                    <img src="Minimalist_Real_Estate_Logo-removebg-preview (1).png" alt="Dashboard">
+                </span>
+            </div>
+            <div class="header-center">
+                <h1>HOSTELHUB</h1>
+            </div>
+            <div class="header-side" style="justify-content: flex-end;"></div>
+        </div>
+        <div id="dashboardMenu">
+            <ul>
+                <li><a href="home.html">Home</a></li>
+            </ul>
+        </div>
+        <h2 class="admin-login-title">Admin Login</h2>
+        <form class="admin-login-form" id="adminLoginForm">
+            <input type="text" id="adminUsername" placeholder="Admin Username" required><br>
+            <input type="password" id="adminPassword" placeholder="Password" required><br>
+            <button type="submit">Login</button>
+        </form>
+        <div class="error-msg" id="adminLoginError" style="display:none;">Invalid credentials!</div>
+    </div>
+    <footer class="footer"></footer>
+    <script>
+    document.getElementById('dashboardIcon').onclick = function(e) {
+        e.stopPropagation();
+        const menu = document.getElementById('dashboardMenu');
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    };
+    document.body.onclick = function(e) {
+        const menu = document.getElementById('dashboardMenu');
+        if (menu) menu.style.display = 'none';
+    };
+    document.getElementById('adminLoginForm').onsubmit = function(e) {
+        e.preventDefault();
+        const username = document.getElementById('adminUsername').value.trim();
+        const password = document.getElementById('adminPassword').value;
+        let admins = JSON.parse(localStorage.getItem('admins') || '[]');
+        if (!admins.some(a => a.username === 'admin')) {
+            admins.push({ username: 'admin', password: 'admin123', email: 'admin@hostelhub.com' });
+            localStorage.setItem('admins', JSON.stringify(admins));
+        }
+        const found = admins.find(a => a.username === username && a.password === password);
+        if (found) {
+            localStorage.setItem('isAdmin', 'true');
+            localStorage.setItem('adminUser', username);
+            window.location.href = 'admin-dashboard.html';
+        } else {
+            document.getElementById('adminLoginError').style.display = 'block';
+        }
+    };
+    </script>
+</body>
+</html> 

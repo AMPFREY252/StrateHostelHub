@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Contact - Hostelhub</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f9f9f9;
+            color: #222;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 40px auto 100px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+            padding: 40px 30px;
+        }
+        .header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .header-title h1 {
+            color: red;
+            font-size: 2.5rem;
+            margin: 0;
+        }
+        #dashboardIcon {
+            cursor: pointer;
+            margin-left: 18px;
+        }
+        #dashboardIcon img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            vertical-align: middle;
+        }
+        .register-link img {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+        }
+        #dashboardMenu {
+            display: none;
+            position: absolute;
+            right: 40px;
+            top: 90px;
+            background: #fff;
+            color: #222;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            padding: 18px 24px;
+            z-index: 2000;
+        }
+        #dashboardMenu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #dashboardMenu li {
+            margin-bottom: 10px;
+        }
+        #dashboardMenu li:last-child {
+            margin-bottom: 0;
+        }
+        input[type="text"], input[type="email"], textarea {
+            width: 90%;
+            padding: 12px;
+            margin: 10px 0 20px 0;
+            border: 1.5px solid #452B1F;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        button[type="submit"] {
+            background: #452B1F;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            padding: 12px 32px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button[type="submit"]:hover {
+            background: #ff4d4d;
+        }
+        .footer {
+            background: #452B1F;
+            color: #fff;
+            text-align: center;
+            padding: 24px 0 16px 0;
+            position: fixed;
+            width: 100vw;
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        .site {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 2px 10px rgba(69,43,31,0.13);
+            background: #fff;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-row">
+            <img src="dashboard.png" alt="Site Icon" class="site">
+            <span id="dashboardIcon">
+                <img src="dashboard.png" alt="Dashboard" class="header-icon-img">
+            </span>
+            <div class="center-heading">HOSTELHUB</div>
+            <a class="register-link" href="login.html">
+                <img src="regester.jpeg" alt="Register/Login" class="header-icon-img">
+            </a>
+        </div>
+        <div id="dashboardMenu">
+            <ul>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="terms.html">Terms & Conditions</a></li>
+                <li><a href="help.html">Help & FAQs</a></li>
+                <li><a href="hostels.html">Available Hostels</a></li>
+                <li><a href="bookings.html">Bookings</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="register.html">Register</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </div>
+        <h1>Contact Us</h1>
+        <form id="contactForm">
+            <input type="text" id="contactName" placeholder="Your Name" required><br>
+            <input type="email" id="contactEmail" placeholder="Your Email" required><br>
+            <textarea id="contactMessage" placeholder="Your Message" rows="5" required></textarea><br>
+            <button type="submit">Send Message</button>
+        </form>
+        <div id="contactSuccess" style="display:none;color:green;font-weight:bold;">Message sent! We'll get back to you soon.</div>
+        <h2>Other Ways to Reach Us</h2>
+        <ul style="list-style:none;padding:0;font-size:1.1rem;">
+            <li><span>📱</span> WhatsApp: <a href="https://wa.me/256700000000" target="_blank">+256 700 000000</a></li>
+            <li><span>✉️</span> Email: <a href="mailto:ampfreytukwasibwe@gmail.com">ampfreytukwasibwe@gmail.com</a></li>
+            <li><span>🐦</span> Twitter: <a href="https://twitter.com/yourprofile" target="_blank">@yourprofile</a></li>
+            <li><span>❌</span> X: <a href="https://x.com/yourprofile" target="_blank">@yourprofile</a></li>
+        </ul>
+    </div>
+    <footer class="footer"></footer>
+    <script>
+    document.getElementById('dashboardIcon').onclick = function(e) {
+        e.stopPropagation();
+        const menu = document.getElementById('dashboardMenu');
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    };
+    document.body.onclick = function(e) {
+        const menu = document.getElementById('dashboardMenu');
+        if (menu) menu.style.display = 'none';
+    };
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('contactEmail').value;
+        const message = document.getElementById('contactMessage').value;
+
+        if (email && message) {
+            const messages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
+            messages.push({ email, message, date: new Date().toISOString() });
+            localStorage.setItem('contactMessages', JSON.stringify(messages));
+            
+            alert('Your message has been sent successfully!');
+            document.getElementById('contactForm').reset();
+        } else {
+            alert('Please fill out all fields.');
+        }
+    });
+    </script>
+    <script src="script.js"></script>
+</body>
+</html> 

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Terms and Conditions - Hostelhub</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f9f9f9;
+            color: #222;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 40px auto 100px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+            padding: 40px 30px;
+        }
+        .header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .header-title h1 {
+            color: red;
+            font-size: 2.5rem;
+            margin: 0;
+        }
+        #dashboardIcon {
+            cursor: pointer;
+            margin-left: 18px;
+        }
+        #dashboardIcon img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            vertical-align: middle;
+        }
+        .register-link img {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+        }
+        #dashboardMenu {
+            display: none;
+            position: absolute;
+            right: 40px;
+            top: 90px;
+            background: #fff;
+            color: #222;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            padding: 18px 24px;
+            z-index: 2000;
+        }
+        #dashboardMenu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #dashboardMenu li {
+            margin-bottom: 10px;
+        }
+        #dashboardMenu li:last-child {
+            margin-bottom: 0;
+        }
+        .footer {
+            background: #452B1F;
+            color: #fff;
+            text-align: center;
+            padding: 24px 0 16px 0;
+            position: fixed;
+            width: 100vw;
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        .terms-section {
+            max-width: 700px;
+            margin: 40px auto 32px auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(69,43,31,0.10);
+            padding: 36px 32px 32px 32px;
+        }
+        .terms-section h2 {
+            text-align: center;
+            color: #452B1F;
+            margin-bottom: 18px;
+        }
+        .terms-section ol {
+            margin: 0 0 18px 0;
+            padding-left: 22px;
+        }
+        .terms-section li {
+            margin-bottom: 14px;
+            line-height: 1.7;
+            background: #f7e7e7;
+            border-radius: 8px;
+            padding: 12px 16px;
+            box-shadow: 0 1px 4px #ff4d4d11;
+        }
+        .terms-section li b {
+            color: #ff4d4d;
+        }
+        @media (max-width: 600px) {
+            .terms-section {
+                padding: 18px 6vw 18px 6vw;
+            }
+        }
+        .site {
+            display: block;
+            margin: 0 auto 10px auto;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 2px 10px rgba(69,43,31,0.13);
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="dashboard.png" alt="Site Icon" class="site">
+        <div class="top-row">
+            <span id="dashboardIcon">
+                <img src="dashboard.png" alt="Dashboard" class="header-icon-img">
+            </span>
+            <div class="center-heading">HOSTELHUB</div>
+            <a class="register-link" href="login.html">
+                <img src="regester.jpeg" alt="Register/Login" class="header-icon-img">
+            </a>
+        </div>
+        <div id="dashboardMenu">
+            <ul>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="terms.html">Terms & Conditions</a></li>
+                <li><a href="help.html">Help & FAQs</a></li>
+                <li><a href="hostels.html">Available Hostels</a></li>
+                <li><a href="bookings.html">Bookings</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="register.html">Register</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </div>
+        <div class="terms-section">
+          <h2>Terms and Conditions</h2>
+          <ol>
+            <li><b>Account Registration:</b> Users must provide accurate information when registering. False information may result in account suspension.</li>
+            <li><b>Eligibility:</b> Only university students or authorized users may book hostels through Hostelhub.</li>
+            <li><b>Booking Policy:</b> All bookings are subject to availability and confirmation by the hostel management.</li>
+            <li><b>Payment:</b> Payments must be made through the provided mobile money options. Bookings are not confirmed until payment is received.</li>
+            <li><b>Cancellation:</b> Cancellations must be made at least 24 hours before the check-in date. Refunds are subject to hostel policy.</li>
+            <li><b>Conduct:</b> Users must behave respectfully and follow hostel rules. Misconduct may result in booking cancellation or account suspension.</li>
+            <li><b>Data Privacy:</b> Hostelhub will not share your personal information with third parties except as required by law.</li>
+            <li><b>Changes to Hostels:</b> Hostelhub reserves the right to update hostel information, prices, and availability at any time.</li>
+            <li><b>Limitation of Liability:</b> Hostelhub is not responsible for any loss, damage, or injury incurred during your stay at a hostel.</li>
+            <li><b>Acceptance:</b> By using Hostelhub, you agree to these terms and conditions. Hostelhub may update these terms at any time.
+          </ol>
+        </div>
+    </div>
+    <footer class="footer"></footer>
+    <script>
+    document.getElementById('dashboardIcon').onclick = function(e) {
+        e.stopPropagation();
+        const menu = document.getElementById('dashboardMenu');
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    };
+    document.body.onclick = function(e) {
+        const menu = document.getElementById('dashboardMenu');
+        if (menu) menu.style.display = 'none';
+    };
+    </script>
+    <script src="script.js"></script>
+</body>
+</html> 

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Help & FAQs - Hostelhub</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f9f9f9;
+            color: #222;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 40px auto 100px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+            padding: 40px 30px;
+        }
+        .header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .header-title h1 {
+            color: red;
+            font-size: 2.5rem;
+            margin: 0;
+        }
+        #dashboardIcon {
+            cursor: pointer;
+            margin-left: 18px;
+        }
+        #dashboardIcon img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            vertical-align: middle;
+        }
+        .register-link img {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+        }
+        #dashboardMenu {
+            display: none;
+            position: absolute;
+            right: 40px;
+            top: 90px;
+            background: #fff;
+            color: #222;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            padding: 18px 24px;
+            z-index: 2000;
+        }
+        #dashboardMenu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #dashboardMenu li {
+            margin-bottom: 10px;
+        }
+        #dashboardMenu li:last-child {
+            margin-bottom: 0;
+        }
+        .footer {
+            background: #452B1F;
+            color: #fff;
+            text-align: center;
+            padding: 24px 0 16px 0;
+            position: fixed;
+            width: 100vw;
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        .faq-section {
+            max-width: 700px;
+            margin: 40px auto 32px auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(69,43,31,0.10);
+            padding: 36px 32px 32px 32px;
+        }
+        .faq-section h2 {
+            text-align: center;
+            color: #452B1F;
+            margin-bottom: 18px;
+        }
+        .faq-section h3 {
+            color: #ff4d4d;
+            margin-top: 24px;
+            margin-bottom: 10px;
+        }
+        .faq-section ol, .faq-section ul {
+            margin: 0 0 18px 0;
+            padding-left: 22px;
+        }
+        .faq-section li {
+            margin-bottom: 10px;
+            line-height: 1.7;
+        }
+        .faq-section ul li {
+            background: #f7e7e7;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 4px #ff4d4d11;
+        }
+        .faq-section ul li b {
+            color: #452B1F;
+        }
+        .faq-section ol li b {
+            color: #ff4d4d;
+        }
+        @media (max-width: 600px) {
+            .faq-section {
+                padding: 18px 6vw 18px 6vw;
+            }
+        }
+        .site {
+            display: block;
+            margin: 0 auto 10px auto;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 2px 10px rgba(69,43,31,0.13);
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="dashboard.png" alt="Site Icon" class="site">
+        <div class="top-row">
+            <span id="dashboardIcon">
+                <img src="dashboard.png" alt="Dashboard" class="header-icon-img">
+            </span>
+            <div class="center-heading">HOSTELHUB</div>
+            <a class="register-link" href="login.html">
+                <img src="regester.jpeg" alt="Register/Login" class="header-icon-img">
+            </a>
+        </div>
+        <div id="dashboardMenu">
+            <ul>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="terms.html">Terms & Conditions</a></li>
+                <li><a href="help.html">Help & FAQs</a></li>
+                <li><a href="hostels.html">Available Hostels</a></li>
+                <li><a href="bookings.html">Bookings</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="register.html">Register</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </div>
+        <div class="faq-section">
+  <h2>Help & FAQs</h2>
+  <h3>How to Use Hostelhub</h3>
+  <ol>
+    <li><b>Browse Hostels:</b> On the home page, use the search bar or dashboard menu to find available hostels.</li>
+    <li><b>View Hostel Details:</b> Click on any hostel to see its details, including location, distance, price, and room type.</li>
+    <li><b>Book a Hostel:</b> Click the "Book" button on your preferred hostel. You must be logged in to book.</li>
+    <li><b>Login/Register:</b> If you don’t have an account, register first. Use your credentials to log in.</li>
+    <li><b>Bookings & Payments:</b> After booking, go to the Bookings page to pay using mobile money options. Follow the instructions to complete payment.</li>
+    <li><b>Real-Time Updates:</b> If hostels are added, updated, or removed by the admin, your hostel list will update instantly. You’ll see a notification at the top of the page when this happens.</li>
+    <li><b>Contact & Support:</b> Use the Contact page to send messages to the admin. You’ll receive replies via your email, sometimes with downloadable files.</li>
+    <li><b>Profile & History:</b> Access your profile to view your booking and payment history, and to change your password.</li>
+    <li><b>Dashboard Menu:</b> Use the dashboard icon (top left) to access all pages and features.</li>
+    <li><b>Logout:</b> Use the dashboard menu to log out when finished.</li>
+  </ol>
+  <h3>Frequently Asked Questions</h3>
+  <ul>
+    <li><b>Q:</b> Why can’t I book a hostel?<br><b>A:</b> You must be logged in to book. Please log in or register.</li>
+    <li><b>Q:</b> How do I know my booking was successful?<br><b>A:</b> After booking, you’ll see it listed on your Bookings page. You can then proceed to payment.</li>
+    <li><b>Q:</b> How do I pay for my booking?<br><b>A:</b> Go to the Bookings page and click "Pay". Follow the mobile money instructions.</li>
+    <li><b>Q:</b> What if the hostel list changes while I’m browsing?<br><b>A:</b> The list will update automatically and you’ll see a notification.</li>
+    <li><b>Q:</b> How do I contact support?<br><b>A:</b> Use the Contact page. The admin will reply to your email.</li>
+    <li><b>Q:</b> Can I receive files from the admin?<br><b>A:</b> Yes, the admin can send you files via email with a download link.</li>
+    <li><b>Q:</b> How do I update my profile?<br><b>A:</b> Go to your profile page from the dashboard menu.</li>
+    <li><b>Q:</b> How do I log out?<br><b>A:</b> Use the dashboard menu and click "Logout".</li>
+    <li><b>Q:</b> What if I forget my password?<br><b>A:</b> Use the password change option in your profile. If you need more help, contact support.</li>
+    <li><b>Q:</b> What browsers are supported?<br><b>A:</b> Hostelhub works best on modern browsers like Chrome, Firefox, and Edge. 
